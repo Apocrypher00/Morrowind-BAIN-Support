@@ -65,7 +65,7 @@ function getBainFolders(files) {
 // Function to test if the content is supported
 // This function checks if the game ID matches and if there are any BAIN folders in the mod archive
 function testSupportedContent(files, gameId) {
-    let supported = ((gameId === GAME_ID) && (getBainFolders(files).length > 0));
+    const supported = ((gameId === GAME_ID) && (getBainFolders(files).length > 0));
     return Promise.resolve({
         supported,
         requiredFiles: [],
@@ -76,8 +76,21 @@ function testSupportedContent(files, gameId) {
 
 // Function to show a dialog for folder selection
 // This function presents a dialog to the user with checkboxes for each BAIN folder
-async function showFolderSelectionDialog(bainFolders, context) {
-    const result = await context.api.showDialog('question', 'Choose BAIN Options', {
+async function showFolderSelectionDialog(bainFolders, archivePath, context) {
+    // Retrieve the array of downloaded files
+    const downloads = context.api.getState().persistent.downloads.files
+    
+    // Get the archive file name from the path
+    const archiveFileName = path.basename(archivePath);
+    
+    // Find the mod download that matches the archive file name
+    const modDownload = Object.values(downloads).find(dl => dl.localPath === archiveFileName);
+    
+    // Set the mod name to the archive file name or the mod download name
+    const modName = modDownload.modInfo?.name || archiveFileName;
+
+    // Present a dialog to the user with checkboxes for each BAIN folder
+    const result = await context.api.showDialog('question', modName, {
         text: 'Choose the folders you want to install:',
         checkboxes: bainFolders.map((folder, index) => ({
             id: folder,                  // Unique identifier for the checkbox
@@ -102,15 +115,15 @@ async function showFolderSelectionDialog(bainFolders, context) {
 
 // Function to install content
 // This function processes the files in the mod archive and generates instructions for Vortex
-async function installContent(files, context) {
+async function installContent(files, archivePath, context) {
     // First we need the list of BAIN folders in the mod archive.
     const bainFolders = getBainFolders(files);
     log('debug', `BAIN folders: ${bainFolders.join(', ')}`);
 
     // Present the user with a list of folders to choose from.
-    let selectedFolders = [];
+    let selectedFolders;
     try {
-        selectedFolders = await showFolderSelectionDialog(bainFolders, context);
+        selectedFolders = await showFolderSelectionDialog(bainFolders, archivePath, context);
     } catch (error) {
         log('error', `Dialog error: ${error.message}`);
         return []; // Exit early if an error occurs
@@ -143,10 +156,18 @@ async function installContent(files, context) {
 function main(context) {
     // Register a new installer for the BAIN format
     context.registerInstaller(
-        'morrowind-bain-support',                 // Unique identifier for the installer  
-        25,                                       // Priority for the installer
-        testSupportedContent,                     // Function to test if the content is supported
-        (files) => installContent(files, context) // Function to install the content, passing the context
+        'morrowind-bain-support', // Unique identifier for the installer  
+        25,                       // Priority for the installer
+        testSupportedContent,     // Function to test if the content is supported
+        (
+            files,
+            _tempPath,
+            _gameId,
+            _unknown1,
+            _unknown2,
+            _unknown3,
+            archivePath
+        ) => installContent(files, archivePath, context) // Function to install the content
     );
 
     return true;
