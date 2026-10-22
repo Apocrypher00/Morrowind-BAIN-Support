@@ -119,7 +119,7 @@ async function installContent(
     let selectedFolders: string[];
     try {
         selectedFolders = await showFolderSelectionDialog(bainFolders, archivePath, context);
-    } catch (error: any) {
+    } catch (error) {
         log('error', `Dialog error: ${error.message}`);
         throw error;
     }
@@ -167,5 +167,5 @@ function main(context: types.IExtensionContext): boolean {
 
 /* === EXPORTS ====================================================================================================== */
 
-//export default main;
-module.exports = main;
+export default main;
+//module.exports = main;
