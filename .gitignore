@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+*.tsbuildinfo
+*.zip
+
+# Debug files
+VortexDebug/
+index_dev.js
+*.log
