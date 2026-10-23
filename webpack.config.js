@@ -14,5 +14,6 @@ module.exports = {
         rules: [{ test: /\.tsx?$/, loader: 'ts-loader', exclude: /node_modules/ }]
     },
     resolve: { extensions: ['.ts', '.js'] },
-    externals: { 'vortex-api': 'commonjs vortex-api' }
+    // The scoped package supplies types; Vortex supplies the runtime under its original name.
+    externals: { '@nexusmods/vortex-api': 'commonjs vortex-api' }
 };
