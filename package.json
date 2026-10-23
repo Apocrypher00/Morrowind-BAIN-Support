@@ -7,7 +7,7 @@
         "typecheck": "tsc --noEmit",
         "webpack": "webpack --config webpack.config.js",
         "build": "npm run typecheck && npm run webpack && extractInfo",
-        "package": "npm run build && node scripts/package.js"
+        "package": "npm run build && node scripts/package.mjs"
     },
     "author": "Apocrypher00",
     "license": "Unlicense",
