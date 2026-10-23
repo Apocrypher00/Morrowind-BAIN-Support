@@ -2,7 +2,7 @@
 
 // Import some assets from Vortex that we'll need.
 import * as path from 'path';
-import { log, types, util } from 'vortex-api';
+import { log, types, util } from '@nexusmods/vortex-api';
 
 /* === CONSTANTS ==================================================================================================== */
 

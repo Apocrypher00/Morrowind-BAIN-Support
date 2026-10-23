@@ -5,7 +5,6 @@ A Vortex extension for selecting numbered components in Morrowind BAIN archives.
 ## Build prerequisites
 
 - Node.js 20.9.0 or newer (validated with Node.js 20.19.2 and npm 10.8.2).
-- Git, required to download the pinned Vortex API development dependency.
 
 Vortex source code is not required. The installed Vortex application supplies
 `vortex-api` when running the extension.
@@ -42,10 +41,22 @@ Canceling or selecting no folders cancels installation.
 
 ## Development scope
 
-The Vortex API remains pinned to the previously used commit. The build uses
-TypeScript 6 and webpack 5, while preserving the existing TypeScript checking
-settings and ES2019 output target. Stricter source typing and migration to a newer
-Vortex API are separate changes.
+Development uses the published `@nexusmods/vortex-api` package, pinned in
+`package.json` and `package-lock.json`. The build uses TypeScript 6 and webpack 5
+with bundler module resolution and ES2019 output. Stricter source typing is a
+separate change.
+
+The API package supplies type declarations and the metadata generator. The compiled
+extension still imports `vortex-api` from Vortex at runtime; the API package and
+its UI dependencies are not bundled into the extension.
+
+The repository's `.npmrc` uses `legacy-peer-deps=true`, following the
+[Vortex migration guide](https://github.com/Nexus-Mods/Vortex/blob/master/packages/vortex-api/docs/MIGRATION.md#if-npm-install-fails-with-eresolve)
+for conflicting React peer dependencies. This installer does not use React, so it
+does not install Vortex's UI packages. Node and Bluebird type declarations are
+explicit development dependencies. If UI components are added later, their
+development dependencies must be reviewed rather than relying on automatic peer
+installation.
 
 ## License
 
